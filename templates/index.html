@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Obyektlarni Aniqlash va Treking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <nav>
+                <ul>
+                    <li><a href="/">Bosh sahifa</a></li>
+                    <li><a href="#">Xizmatlar</a></li>
+                    <li><a href="#">Aloqa</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="header-content">
+            <h1>Obyektlarni Aniqlash va Treking</h1>
+            <div class="typing-container">
+                <span class="typed-text"></span><span class="cursor">&nbsp;</span>
+            </div>
+            <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+                <label for="file-upload" class="custom-file-upload">
+                    Faylni tanlang
+                </label>
+                <input id="file-upload" type="file" name="file" accept="image/*,video/*" required>
+                <button type="submit">Boshlash</button>
+            </form>
+            {% if error %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+
+            <!-- Progress bar -->
+            <div id="progress-container" style="display: none;">
+                <h2>Qayta ishlanmoqda...</h2>
+                <div class="loader"></div>
+                <p id="progress-text">0%</p>
+            </div>
+        </div>
+    </header>
+    <footer>
+        <p>&copy; 2024 Humoyun Safarov</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/typewriter.js') }}"></script>
+    <!-- AJAX va progress bar uchun script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('upload-form');
+            const progressContainer = document.getElementById('progress-container');
+            const progressText = document.getElementById('progress-text');
+            const loader = document.querySelector('.loader');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Formani standart tarzda yuborishni to'xtatamiz
+
+                const formData = new FormData(form);
+
+                // Progress barni ko'rsatamiz
+                progressContainer.style.display = 'block';
+
+                // Formani AJAX orqali yuboramiz
+                fetch('/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        progressContainer.style.display = 'none';
+                    } else {
+                        const taskId = data.task_id;
+                        checkProgress(taskId);
+                    }
+                })
+                .catch(error => {
+                    console.error('Xatolik:', error);
+                    progressContainer.style.display = 'none';
+                });
+            });
+
+            function checkProgress(taskId) {
+                fetch('/progress/' + taskId)
+                .then(response => response.json())
+                .then(data => {
+                    const percent = data.progress;
+                    progressText.textContent = percent + '%';
+
+                    if (percent < 100) {
+                        setTimeout(function() {
+                            checkProgress(taskId);
+                        }, 500); // Har 0.5 soniyada yangilanadi
+                    } else {
+                        // Qayta ishlash tugadi, natijalar sahifasiga o'tamiz
+                        window.location.href = '/result/' + taskId;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

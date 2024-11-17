@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Natijalar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <nav>
+                <ul>
+                    <li><a href="/">Bosh sahifa</a></li>
+                    <li><a href="#">Xizmatlar</a></li>
+                    <li><a href="#">Aloqa</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="header-content">
+            <h1>Natijalar</h1>
+        </div>
+    </header>
+    <main>
+        {% if is_video %}
+        <div class="video-container">
+            <video width="640" height="480" controls>
+                <source src="{{ result_file }}" type="video/mp4">
+                Brauzeringiz video tegini qo'llab-quvvatlamaydi.
+            </video>
+        </div>
+        {% else %}
+        <div class="images">
+            <div class="image-container">
+                <h2>Asl Fayl</h2>
+                <img src="{{ original_file }}" alt="Asl Fayl">
+            </div>
+            <div class="image-container">
+                <h2>Aniqlangan Obyektlar</h2>
+                <img src="{{ result_file }}" alt="Natija">
+            </div>
+        </div>
+        {% endif %}
+        <a href="/" class="again-btn">Yana sinab ko'rish</a>
+    </main>
+    <footer>
+        <p>&copy; 2024 Humoyun Safarov</p>
+    </footer>
+</body>
+</html>
