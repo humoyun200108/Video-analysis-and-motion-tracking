@@ -80,6 +80,7 @@ def process_video(video_path, output_path, task_id=None, progress_dict=None):
 
         writer.close()
 
+
         # Progressni 100% ga o'rnatamiz
         if task_id and progress_dict is not None:
             progress_dict[task_id] = 100
